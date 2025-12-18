@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>保洁服务详情说明书</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* --- 1. 核心配色与基础设置 --- */
+        :root {
+            --primary: #0066FF;       /* 品牌蓝 */
+            --bg: #F5F7FA;            /* 背景灰 */
+            --warning: #FF8800;       /* 警示橙 */
+            --success: #00C853;       /* 咨询绿 */
+            --text-main: #1D1D1F;
+            --text-sub: #86868B;
+            --radius: 16px;
+            --border: #E5E5EA;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            padding-bottom: 110px;
+            line-height: 1.5;
+        }
+
+        /* --- 2. 头部 Header --- */
+        .header {
+            background: #fff;
+            padding: 44px 20px 20px;
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+        .header p {
+            font-size: 14px;
+            color: var(--text-sub);
+            margin: 0;
+        }
+        .badges {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+        }
+        .badge {
+            font-size: 11px;
+            padding: 4px 8px;
+            background: rgba(0, 102, 255, 0.08);
+            color: var(--primary);
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        /* --- 3. 卡片通用样式 --- */
+        .section {
+            background: #fff;
+            margin: 16px;
+            padding: 20px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02); /* 统一添加轻微阴影，增加质感 */
+        }
+        
+        /* 标题行容器 */
+        .section-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px; 
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px; /* 默认下边距，用于非Flex标题 */
+            color: var(--text-main); /* 强制标题统一为黑色 */
+        }
+        .section-title i {
+            color: var(--primary);
+            margin-right: 8px;
+            font-size: 18px;
+        }
+        
+        /* 滑动提示 */
+        .scroll-hint {
+            font-size: 11px; 
+            color: var(--primary); 
+            display: flex; 
+            align-items: center;
+            opacity: 0.8;
+            white-space: nowrap; 
+        }
+        .scroll-hint i { margin-left: 4px; animation: slideRight 1.5s infinite; }
+        @keyframes slideRight { 0%,100% { transform: translateX(0); } 50% { transform: translateX(3px); } }
+
+        /* --- 4. 服务差异对比表 --- */
+        .comparison-wrapper {
+            margin: 0 -20px;
+            padding-bottom: 10px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .compare-table {
+            width: 100%;
+            min-width: 500px;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .compare-table th {
+            background: #F9FAFB;
+            color: var(--text-sub);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 12px 8px;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .compare-table .sticky-col {
+            position: sticky;
+            left: 0;
+            background: #fff;
+            z-index: 20;
+            border-right: 1px solid rgba(0,0,0,0.05);
+            text-align: left;
+            padding-left: 20px;
+            color: var(--text-main);
+            font-weight: 600;
+            width: 100px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.02);
+        }
+        .compare-table td {
+            padding: 12px 4px;
+            border-bottom: 1px solid #f5f5f5;
+            text-align: center;
+            font-size: 13px;
+            vertical-align: middle;
+        }
+        .compare-table tr:nth-child(even) td { background-color: #FAFAFC; }
+        .compare-table tr:nth-child(even) .sticky-col { background-color: #FAFAFC; }
+        .icon-check { color: var(--primary); font-size: 14px; }
+        .icon-cross { color: #D1D1D6; font-size: 12px; }
+        .text-desc { font-size: 11px; color: var(--text-sub); display: block; margin-top: 2px; font-weight: normal;}
+        
+        /* --- 5. 基础服务范围 --- */
+        .room-item { margin-bottom: 20px; }
+        .room-header {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            background: #F9FAFB;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+        .room-header i { width: 24px; color: var(--primary); }
+        .room-grid { display: grid; grid-template-columns: 1fr; gap: 12px; padding-left: 4px; }
+        .scope-row { display: flex; align-items: flex-start; }
+        .scope-tag {
+            flex-shrink: 0; background: rgba(0, 102, 255, 0.1); color: var(--primary);
+            font-size: 11px; padding: 3px 6px; border-radius: 4px;
+            margin-right: 10px; margin-top: 1px; width: 44px; text-align: center; font-weight: 500;
+        }
+        .scope-content { flex: 1; font-size: 13px; color: #444; line-height: 1.6; word-break: break-all; }
+
+        /* --- 6. 表格与咨询 --- */
+        .info-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .info-table th { text-align: left; color: var(--text-sub); font-weight: normal; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .info-table td { padding: 12px 0; border-bottom: 1px solid #f9f9f9; color: var(--text-main); }
+        .strong-text { font-weight: 600; color: var(--primary); }
+        .area-tag { display: inline-block; font-size: 10px; background: #F0F2F5; color: #666; padding: 2px 5px; border-radius: 4px; margin-left: 4px; }
+
+        .consult-box {
+            background: rgba(0, 102, 255, 0.06); border-radius: 12px; padding: 12px 16px;
+            display: flex; align-items: center; justify-content: space-between;
+            margin-top: 16px; border: 1px solid rgba(0, 102, 255, 0.1);
+        }
+        .consult-text { font-size: 13px; color: var(--primary); font-weight: 500; }
+        .consult-text small { display: block; font-size: 11px; color: #666; font-weight: 400; margin-top: 2px; }
+        .consult-btn-sm { background: #fff; color: var(--primary); border: 1px solid var(--primary); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+
+        /* --- 7. 警告与工具 --- */
+        .tools-list { font-size: 13px; background: #F9FAFB; padding: 12px; border-radius: 8px; color: #444; margin-top: 15px; }
+        
+        /* 优化后的警告列表样式 (适配白色卡片) */
+        .warning-list { list-style: none; padding: 0; margin: 0; }
+        .warning-list li { 
+            font-size: 13px; 
+            color: #444; /* 调整为标准深灰，不再是棕色 */
+            margin-bottom: 10px; 
+            padding-left: 20px; 
+            position: relative;
+        }
+        .warning-list li::before { 
+            content: "✕"; 
+            color: var(--warning); /* 保持图标为警示色 */
+            position: absolute; 
+            left: 0; 
+            font-weight: bold; 
+        }
+
+        /* --- 8. 交易须知 --- */
+        .notice-item { margin-bottom: 16px; }
+        .notice-title { 
+            font-size: 14px; 
+            font-weight: 600; 
+            margin-bottom: 6px; 
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+        }
+        /* 为须知标题添加小的装饰点，使其更像列表 */
+        .notice-title::before {
+            content: "";
+            display: inline-block;
+            width: 4px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 2px;
+            margin-right: 8px;
+        }
+        .notice-text { font-size: 13px; color: #666; line-height: 1.6; padding-left: 12px;}
+
+        /* --- 9. 底部 --- */
+        .bottom-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+            padding: 12px 20px 34px; box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
+            display: flex; align-items: center; z-index: 99;
+        }
+        .kefu { display: flex; flex-direction: column; align-items: center; margin-right: 20px; font-size: 10px; color: var(--text-sub); }
+        .kefu i { font-size: 20px; margin-bottom: 4px; }
+        .btn-main { flex: 1; background: var(--primary); color: #fff; text-align: center; padding: 14px; border-radius: 50px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3); }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>家庭保洁服务说明</h1>
+        <p>标准化预期 · 避免争议 · 社区互助</p>
+        <div class="badges">
+            <span class="badge">身份核验</span>
+            <span class="badge">完工验收</span>
+            <span class="badge">无隐形消费</span>
+        </div>
+    </div>
+
+    <!-- 1. 服务项目标准差异 -->
+    <div class="section">
+        <div class="section-header-flex">
+            <div class="section-title" style="margin-bottom: 0;">
+                <i class="fa-solid fa-list-check"></i> 服务差异对比
+            </div>
+            <div class="scroll-hint">向右滑动查看更多 <i class="fa-solid fa-chevron-right"></i></div>
+        </div>
+
+        <div class="comparison-wrapper">
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th class="sticky-col">服务项目</th>
+                        <th>日常<br>保洁</th>
+                        <th>深度<br>保洁</th>
+                        <th>全屋<br>扫除</th>
+                        <th>新居<br>开荒</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="sticky-col">表面除尘<span class="text-desc">家具/地面</span></td>
+                        <td><i class="fa-solid fa-check icon-check"></i></td>
+                        <td><i class="fa-solid fa-check icon-check"></i></td>
+                        <td><i class="fa-solid fa-check icon-check"></i></td>
+                        <td><i class="fa-solid fa-check icon-check"></i></td>
+                    </tr>
+                    <tr>
+                        <td class="sticky-col">物品整理<span class="text-desc">归纳/倒垃圾</span></td>
+                        <td><i class="fa-solid fa-check icon-check"></i></td>
+                        <td><i class="fa-solid fa-check icon-check"></i></td>
+                        <td><i class="fa-solid fa-check icon-check"></i></td>
+                        <td><i class="fa-solid fa-xmark icon-cross"></i></td>
+                    </tr>
+                    <tr>
+                        <td class="sticky-col">除重油污<span class="text-desc">厨房深层</span></td>
+                        <td><i class="fa-solid fa-xmark icon-cross"></i></td>
+                        <td><i class="fa-solid fa-check icon-check"></i></td>
+                        <td><i class="fa-solid fa-check icon-check"></i></td>
+                        <td><i class="fa-solid fa-check icon-check"></i></td>
+                    </tr>
+                    <tr>
+                        <td class="sticky-col">除重水垢<span class="text-desc">卫浴深层</span></td>
+                        <td><i class="fa-solid fa-xmark icon-cross"></i></td>
+                        <td><i class="fa-solid fa-check icon-check"></i></td>
+                        <td><i class="fa-solid fa-check icon-check"></i></td>
+                        <td><i class="fa-solid fa-check icon-check"></i></td>
+                    </tr>
+                    <tr>
+                        <td class="sticky-col">死角/墙面<span class="text-desc">床底/除尘</span></td>
+                        <td><i class="fa-solid fa-xmark icon-cross"></i></td>
+                        <td><i class="fa-solid fa-check icon-check"></i></td>
+                        <td><i class="fa-solid fa-check icon-check"></i></td>
+                        <td><i class="fa-solid fa-check icon-check"></i></td>
+                    </tr>
+                    <tr>
+                        <td class="sticky-col">橱柜内部<span class="text-desc">抽屉/柜子</span></td>
+                        <td><i class="fa-solid fa-xmark icon-cross"></i></td>
+                        <td><i class="fa-solid fa-check icon-check"></i></td>
+                        <td><i class="fa-solid fa-check icon-check"></i></td>
+                        <td><i class="fa-solid fa-check icon-check"></i></td>
+                    </tr>
+                    <tr>
+                        <td class="sticky-col">擦窗户<span class="text-desc">玻璃清洁</span></td>
+                        <td><i class="fa-solid fa-xmark icon-cross"></i></td>
+                        <td style="font-size:11px; color:#555;">仅窗槽</td>
+                        <td style="font-size:11px; color:var(--primary);">双面<br>安全区</td>
+                        <td style="font-size:11px; color:var(--primary);">双面<br>安全区</td>
+                    </tr>
+                    <tr>
+                        <td class="sticky-col">装修遗留<span class="text-desc">胶/漆/水泥</span></td>
+                        <td><i class="fa-solid fa-xmark icon-cross"></i></td>
+                        <td><i class="fa-solid fa-xmark icon-cross"></i></td>
+                        <td><i class="fa-solid fa-xmark icon-cross"></i></td>
+                        <td><i class="fa-solid fa-check icon-check"></i></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 2. 基础服务范围与空间 -->
+    <div class="section">
+        <div class="section-title"><i class="fa-solid fa-house-chimney"></i> 基础服务范围</div>
+        
+        <div class="room-item">
+            <div class="room-header"><i class="fa-solid fa-couch"></i> 客厅 / 卧室 / 书房</div>
+            <div class="room-grid">
+                <div class="scope-row">
+                    <span class="scope-tag">整理</span>
+                    <div class="scope-content">物品简单归位，垃圾袋更换。</div>
+                </div>
+                <div class="scope-row">
+                    <span class="scope-tag">除尘</span>
+                    <div class="scope-content">地面拖洗，地毯吸尘 (需用户提供设备)。</div>
+                </div>
+                <div class="scope-row">
+                    <span class="scope-tag">擦拭</span>
+                    <div class="scope-content">桌面、茶几、电视柜、床头柜等家具<b>外表面</b>及<b>踢脚线</b>。</div>
+                </div>
+                <div class="scope-row">
+                    <span class="scope-tag">门窗</span>
+                    <div class="scope-content">室内门表面擦拭，窗台表面除尘 (不含窗外玻璃)。</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="room-item">
+            <div class="room-header"><i class="fa-solid fa-kitchen-set"></i> 厨房区域</div>
+            <div class="room-grid">
+                <div class="scope-row">
+                    <span class="scope-tag">台面</span>
+                    <div class="scope-content">灶台表面、操作台表面、水槽及水龙头除垢。</div>
+                </div>
+                <div class="scope-row">
+                    <span class="scope-tag">电器</span>
+                    <div class="scope-content">油烟机<b>表面</b>、冰箱/微波炉<b>外表面</b>擦拭。</div>
+                </div>
+                <div class="scope-row">
+                    <span class="scope-tag">墙地</span>
+                    <div class="scope-content">墙面及地面油污简单处理。</div>
+                </div>
+                <div class="scope-row">
+                    <span class="scope-tag">餐具</span>
+                    <div class="scope-content">仅限 3-5 件内少量餐具清洗 (大量需协商)。</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="room-item" style="margin-bottom:0">
+            <div class="room-header"><i class="fa-solid fa-toilet"></i> 卫生间 / 阳台</div>
+            <div class="room-grid">
+                <div class="scope-row">
+                    <span class="scope-tag">洁具</span>
+                    <div class="scope-content">马桶/蹲便器<b>内外刷洗</b>，浴缸/淋浴房表面清洁。</div>
+                </div>
+                <div class="scope-row">
+                    <span class="scope-tag">五金</span>
+                    <div class="scope-content">花洒、龙头水渍擦拭，镜面清洁。</div>
+                </div>
+                <div class="scope-row">
+                    <span class="scope-tag">阳台</span>
+                    <div class="scope-content">地面拖洗，栏杆扶手擦拭。</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 时长与工具 -->
+    <div class="section">
+        <div class="section-title"><i class="fa-regular fa-clock"></i> 推荐时长与工具</div>
+        <table class="info-table">
+            <thead><tr><th>建筑面积</th><th>推荐时长</th><th>建议人数</th></tr></thead>
+            <tbody>
+                <tr>
+                    <td>50㎡以内 <span class="area-tag">公寓/Loft</span></td>
+                    <td class="strong-text">1.5 - 2.5 小时</td>
+                    <td>1人</td>
+                </tr>
+                <tr>
+                    <td>50 - 90㎡ <span class="area-tag">两居</span></td>
+                    <td class="strong-text">3 - 4 小时</td>
+                    <td>1人</td>
+                </tr>
+                <tr>
+                    <td>90 - 130㎡ <span class="area-tag">三居/四居</span></td>
+                    <td class="strong-text">4 - 5 小时</td>
+                    <td>1-2人</td>
+                </tr>
+                <tr>
+                    <td>130㎡以上 <span class="area-tag">复式/大平层</span></td>
+                    <td class="strong-text">建议多人</td>
+                    <td>2人+</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 咨询引导交互 -->
+        <div class="consult-box">
+            <div class="consult-text">
+                <i class="fa-regular fa-comment-dots"></i> 无法判断时长？
+                <small>如果不确定房屋脏乱程度或面积</small>
+            </div>
+            <div class="consult-btn-sm">联系服务者咨询</div>
+        </div>
+
+        <div class="tools-list">
+            <p style="margin:0 0 8px 0;"><b>✔ 服务者携带：</b> 抹布、百洁布、玻璃刮、基础清洁剂。</p>
+            <p style="margin:0;"><b>✖ 需用户提供：</b> 吸尘器、水桶/拖把、特殊清洁剂。</p>
+        </div>
+    </div>
+
+    <!-- 4. 非服务范围 (样式已统一：白色卡片 + 标准标题) -->
+    <div class="section">
+        <!-- 保持标题结构一致：蓝色图标 + 黑色文字 -->
+        <div class="section-title">
+            <i class="fa-solid fa-circle-exclamation" style="color:var(--warning)"></i> 严正声明：非服务范围
+        </div>
+        <ul class="warning-list">
+            <li><b>高危作业：</b>不提供室外高空擦窗、不移动超20kg重物。</li>
+            <li><b>特殊污渍：</b>不处理陈年霉斑、深度渗色、宠物排泄物。</li>
+            <li><b>贵重物品：</b>古董字画、未锁珠宝现金、精密手办等。</li>
+            <li><b>家电清洗：</b>仅做表面擦拭，不拆机清洗内部。</li>
+        </ul>
+    </div>
+
+    <!-- 5. 交易、验收与售后 (样式已统一：白色卡片 + 标准标题) -->
+    <div class="section">
+        <div class="section-title">
+            <i class="fa-solid fa-file-contract"></i> 交易、验收与售后
+        </div>
+        
+        <div class="notice-item">
+            <div class="notice-title">费用与超时</div>
+            <div class="notice-text">按【小时】或【一口价】结算。如因房屋过大过脏导致超时，需现场协商补差价。</div>
+        </div>
+
+        <div class="notice-item">
+            <div class="notice-title">验收流程</div>
+            <div class="notice-text">服务结束前15分钟邀请您现场验收。请检查地面污渍、垃圾带走情况。确认无误后再点击完成。</div>
+        </div>
+
+        <div class="notice-item">
+            <div class="notice-title">售后特别说明</div>
+            <div class="notice-text">
+                1. <b>暂无保险：</b>平台不提供意外险，请收好贵重物品。<br>
+                2. <b>不满意重做：</b><span style="color:var(--primary); font-weight:600;">非强制服务。</span>如接单人员承诺该权益，可按标准重做；如未承诺，需双方现场友好协商解决方案。<br>
+                3. <b>上门时效：</b>受交通影响，无法保证30分钟极速上门。
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部 -->
+    <div class="bottom-bar">
+        <div class="kefu">
+            <i class="fa-regular fa-comments"></i>
+            <span>客服咨询</span>
+        </div>
+        <div class="btn-main">立即预约</div>
+    </div>
+</body>
+</html>
